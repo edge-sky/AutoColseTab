@@ -1,7 +1,4 @@
-let isReady = false;
-
-chrome.alarms.create('keepAlive', {periodInMinutes: 1.5});
-
+let isReady = true;
 
 chrome.windows.onRemoved.addListener(function (windowId) {
     // close process complete
@@ -22,6 +19,7 @@ chrome.tabs.onCreated.addListener(function (tab) {
     try {
         // get state of is new tab; it sees like run more than one time, it may a problem
         chrome.storage.local.get('newOpen', function (data) {
+            isReady = false;
             if (data.newOpen) {
                 // set state of new tab
                 chrome.storage.local.set({newOpen: false});
