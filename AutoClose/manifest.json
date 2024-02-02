@@ -1,10 +1,10 @@
 {
     "name": "AutoCloseTap",
-    "version": "0.75",
+    "version": "0.85",
     "manifest_version": 3,
     "description": "Tab-groups will be fixed in default，this extension can auto close pages when you close browser",
     "permissions": [
-        "tabs", "tabGroups", "activeTab",  "storage"
+        "tabs", "tabGroups", "activeTab",  "storage", "alarms"
     ],
     "background": {
         "service_worker": "background.js"

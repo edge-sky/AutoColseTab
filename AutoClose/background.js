@@ -1,5 +1,7 @@
 let isReady = false;
 
+chrome.alarms.create('keepAlive', {periodInMinutes: 1.5});
+
 
 chrome.windows.onRemoved.addListener(function (windowId) {
     // close process complete
@@ -10,9 +12,8 @@ chrome.windows.onRemoved.addListener(function (windowId) {
             }
         });
     } else {
-        // waiting when not ready
         setTimeout(function () {
-            isReady = true;
+            // waiting 0.5second
         }, 500);
     }
 });
@@ -22,20 +23,17 @@ chrome.tabs.onCreated.addListener(function (tab) {
         // get state of is new tab; it sees like run more than one time, it may a problem
         chrome.storage.local.get('newOpen', function (data) {
             if (data.newOpen) {
-                // close all tab except new tab
-                chrome.tabs.query({}, function (tabs) {
-                    for (let i = 0; i < tabs.length; i++) {
-                        if (tabs[i].id !== tab.id && tabs[i].url !== 'edge://newtab/') {
-                            chrome.tabs.remove(tabs[i].id);
-                        }
-                    }
-                });
                 // set state of new tab
                 chrome.storage.local.set({newOpen: false});
+                // close tab except new tab
+                if (tab.url !== '') {
+                    chrome.tabs.remove(tab.id);
+                }
+
             }
-            isReady = true;
         });
     } catch (e) {
         console.log(e);
     }
+    isReady = true;
 });
