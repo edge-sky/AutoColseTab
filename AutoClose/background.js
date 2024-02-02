@@ -27,11 +27,10 @@ chrome.tabs.onCreated.addListener(function (tab) {
                 if (tab.url !== '') {
                     chrome.tabs.remove(tab.id);
                 }
-
             }
+            isReady = true;
         });
     } catch (e) {
         console.log(e);
     }
-    isReady = true;
 });
