@@ -51,6 +51,9 @@ chrome.runtime.onInstalled.addListener(function () {
         newOpen: true,
         closeTimes: 0,
         closeNum: 0,
-        lastCloseNum: 0
+        lastCloseNum: 0,
+        isBlackList: true,
+        blackList: [],
+        whiteList: [],
     });
 });
