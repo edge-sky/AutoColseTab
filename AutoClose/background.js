@@ -16,18 +16,18 @@ chrome.windows.onRemoved.addListener(function (windowId) {
     }
 });
 
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
-    if (changeInfo.url === 'edge://newtab/') {
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+    if (tab.status === 'complete') {
         // get state of is new tab; it sees like run more than one time, it may a problem
         chrome.storage.local.get('newOpen', function (data) {
-            if (data.newOpen) {
+            if (isReady && data.newOpen && tab.active) {
                 isReady = false;
                 // set state of new tab
                 chrome.storage.local.set({newOpen: false});
 
                 chrome.tabs.query({currentWindow: true}, function (tabs) {
                     for (let i = 0; i < tabs.length; i++) {
-                        if (tabs[i].url !== 'edge://newtab/') {
+                        if (tabs[i].id !== tab.id) {
                             chrome.tabs.remove(tabs[i].id);
                         }
                     }
