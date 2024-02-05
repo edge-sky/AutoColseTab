@@ -19,11 +19,60 @@ document.getElementById('listSwitch').addEventListener('change', function (event
         chrome.storage.local.set({isBlackList: true});
         document.getElementById('displayList').innerText = '黑名单';
     }
+    displayList();
 });
 
-document.querySelector('#displayList').addEventListener('click', function (event) {
+document.querySelector('#setting_option').addEventListener('click', function (event) {
+    displayList();
     // 隐藏id为"main"的元素
     document.querySelector('#main').style.display = 'none';
     // 显示新的元素
-    document.querySelector('#list').style.display = 'block';
+    document.querySelector('#setting').style.display = 'block';
 });
+
+document.querySelector('#back_button').addEventListener('click', function (event) {
+    // 隐藏id为"main"的元素
+    document.querySelector('#setting').style.display = 'none';
+    // 显示新的元素
+    document.querySelector('#main').style.display = 'block';
+});
+
+function displayList() {
+    chrome.storage.local.get(['isBlackList', 'blackList', 'whiteList'], function (data) {
+        let list = data.isBlackList ? data.blackList : data.whiteList;
+        let listElement = document.getElementById('list');
+        listElement.innerHTML = '';
+        for (let i = 0; i < list.length; i++) {
+            let listItem = document.createElement('div');
+            listItem.textContent = list[i];
+            listElement.appendChild(listItem);
+        }
+
+        let addElement = document.createElement('div');
+        let inputElement = document.createElement('input');
+        let addButton = document.createElement('button');
+        addButton.textContent = '+';
+
+        inputElement.style.width = '90px';
+        addButton.style.width = '25px';
+        inputElement.id = 'input';
+        addButton.onclick = function () {
+            let value = inputElement.value;
+            if (value) {
+                list.push(value);
+                if (data.isBlackList) {
+                    chrome.storage.local.set({blackList: list});
+                } else {
+                    chrome.storage.local.set({whiteList: list});
+                }
+                displayList();
+            }
+        };
+
+        addElement.appendChild(inputElement);
+        addElement.appendChild(addButton);
+
+        // add to the end
+        listElement.appendChild(addElement);
+    });
+}

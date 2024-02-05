@@ -19,16 +19,30 @@ chrome.windows.onRemoved.addListener(function (windowId) {
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (tab.status === 'complete') {
         // get state of is new tab; it sees like run more than one time, it may a problem
-        chrome.storage.local.get('newOpen', function (data) {
+        chrome.storage.local.get(['newOpen', 'isBlackList', 'blackList', 'whiteList'], function (data) {
             if (isReady && data.newOpen && tab.active) {
                 isReady = false;
                 // set state of new tab
                 chrome.storage.local.set({newOpen: false});
 
                 chrome.tabs.query({currentWindow: true}, function (tabs) {
-                    for (let i = 0; i < tabs.length; i++) {
-                        if (tabs[i].id !== tab.id) {
-                            chrome.tabs.remove(tabs[i].id);
+                    if (data.isBlackList) {
+                        // black list mode
+                        for (let i = 0; i < tabs.length; i++) {
+                            for (let j = 0; j < data.blackList.length; j++) {
+                                if (tabs[i].id !== tab.id && !matchDomain(data.blackList[j], tabs[i].url)) {
+                                    chrome.tabs.remove(tabs[i].id);
+                                }
+                            }
+                        }
+                    } else {
+                        // white list mode
+                        for (let i = 0; i < tabs.length; i++) {
+                            for (let j = 0; j < data.whiteList.length; j++) {
+                                if (tabs[i].id !== tab.id && matchDomain(data.whiteList[j], tabs[i].url)) {
+                                    chrome.tabs.remove(tabs[i].id);
+                                }
+                            }
                         }
                     }
 
@@ -57,3 +71,13 @@ chrome.runtime.onInstalled.addListener(function () {
         whiteList: [],
     });
 });
+
+// Url domain match
+function matchDomain(domainUrl, matchedUrl) {
+    let regex = new RegExp('^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+)', 'im');
+    let match = domainUrl.match(regex);
+    if (match && match[1]) {
+        return matchedUrl.includes(match[1]);
+    }
+    return false;
+}
