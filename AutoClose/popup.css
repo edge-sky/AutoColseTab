@@ -4,6 +4,7 @@ body {
     margin: 20px 30px 20px 20px;
     padding: 0;
     background-color: #cfd2d7;
+    user-select: none;
 }
 
 hr {
@@ -30,6 +31,19 @@ hr {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    transition: 0.15s;
+}
+
+.switch_box:hover .slider {
+    background-color: #666666;
+}
+
+.switch_box:hover {
+    background-color: #a2a2a2;
+}
+
+.switch_box:hover input:checked + .slider {
+    background-color: #2196F3;
 }
 
 .switch {
@@ -82,5 +96,12 @@ input:checked + .slider:before {
 }
 
 .setting_option {
-    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    transition: 0.15s;
+}
+
+.setting_option:hover {
+    background-color: #a2a2a2;
 }

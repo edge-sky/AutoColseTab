@@ -7,21 +7,34 @@
 </head>
 <body>
 <div class="main_box">
-    <div id="closeTimes">总关闭次数:</div>
-    <div id="closeNum">总关闭网页数:</div>
-    <div id="lastCloseNum">上一次关闭数量:</div>
-    <hr style="padding-top: 10px; width: 95%;"/>
-    <div class="option_box">
-        <div class="switch_box">
-            <div id="displayList">黑名单</div>
-            <label class="switch">
-                <input type="checkbox" id="listSwitch">
-                <span class="slider round"></span>
-            </label>
+    <div id="main">
+        <div id="closeTimes">总关闭次数:</div>
+        <div id="closeNum">总关闭网页数:</div>
+        <div id="lastCloseNum">上一次关闭数量:</div>
+        <hr style="padding-top: 10px; width: 95%;"/>
+        <div class="option_box">
+            <div class="switch_box" id="switch_box">
+                <div id="displayList" style="width: 85px">黑名单</div>
+                <label class="switch" id="switch">
+                    <input type="checkbox" id="listSwitch">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="setting_option">
+                <div>
+                    设置
+                </div>
+                <div>
+                    >
+                </div>
+            </div>
         </div>
-        <div class="setting_option">
-            设置
-        </div>
+    </div>
+    <div id="list" style="display: none">
+        list
+    </div>
+    <div id="setting" style="display: none">
+
     </div>
 </div>
 </body>

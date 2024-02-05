@@ -11,7 +11,7 @@ chrome.storage.local.get(['closeTimes', 'closeNum', 'lastCloseNum', 'isBlackList
     }
 });
 
-document.getElementById('listSwitch').addEventListener('change', function(event) {
+document.getElementById('listSwitch').addEventListener('change', function (event) {
     if (event.target.checked) {
         chrome.storage.local.set({isBlackList: false});
         document.getElementById('displayList').innerText = '白名单';
@@ -19,4 +19,11 @@ document.getElementById('listSwitch').addEventListener('change', function(event)
         chrome.storage.local.set({isBlackList: true});
         document.getElementById('displayList').innerText = '黑名单';
     }
+});
+
+document.querySelector('#displayList').addEventListener('click', function (event) {
+    // 隐藏id为"main"的元素
+    document.querySelector('#main').style.display = 'none';
+    // 显示新的元素
+    document.querySelector('#list').style.display = 'block';
 });
