@@ -5,9 +5,11 @@ chrome.storage.local.get(['closeTimes', 'closeNum', 'lastCloseNum', 'isBlackList
     if (data.isBlackList) {
         document.getElementById('listSwitch').checked = false;
         document.getElementById('displayList').innerText = '黑名单';
+        document.getElementById('tip').innerText = 'Tips: 以下网址会被关闭';
     } else {
         document.getElementById('listSwitch').checked = true;
         document.getElementById('displayList').innerText = '白名单';
+        document.getElementById('tip').innerText = 'Tips: 以下网址不会被关闭';
     }
 });
 
@@ -15,9 +17,11 @@ document.getElementById('listSwitch').addEventListener('change', function (event
     if (event.target.checked) {
         chrome.storage.local.set({isBlackList: false});
         document.getElementById('displayList').innerText = '白名单';
+        document.getElementById('tip').innerText = 'Tips: 以下网址不会被关闭';
     } else {
         chrome.storage.local.set({isBlackList: true});
         document.getElementById('displayList').innerText = '黑名单';
+        document.getElementById('tip').innerText = 'Tips: 以下网址会被关闭';
     }
     displayList();
 });
@@ -44,7 +48,26 @@ function displayList() {
         listElement.innerHTML = '';
         for (let i = 0; i < list.length; i++) {
             let listItem = document.createElement('div');
+            let deleteButton = document.createElement('button');
+            deleteButton.textContent = '-';
+            deleteButton.addEventListener('click', function () {
+                // 从列表中删除对应的项
+                list.splice(i, 1);
+                // 更新存储的列表
+                if (data.isBlackList) {
+                    chrome.storage.local.set({blackList: list});
+                } else {
+                    chrome.storage.local.set({whiteList: list});
+                }
+                // 重新显示列表
+                displayList();
+            });
+
+            listItem.style.width = '140px';
+            deleteButton.style.width = '25px';
+
             listItem.textContent = list[i];
+            listItem.appendChild(deleteButton);
             listElement.appendChild(listItem);
         }
 
@@ -53,7 +76,7 @@ function displayList() {
         let addButton = document.createElement('button');
         addButton.textContent = '+';
 
-        inputElement.style.width = '90px';
+        inputElement.style.width = '140px';
         addButton.style.width = '25px';
         inputElement.id = 'input';
         addButton.onclick = function () {

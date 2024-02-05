@@ -17,11 +17,11 @@ chrome.windows.onRemoved.addListener(function (windowId) {
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    if (tab.status === 'complete') {
+    if (tab.status === 'complete' && tab.active && isReady) {
+        isReady = false;
         // get state of is new tab; it sees like run more than one time, it may a problem
         chrome.storage.local.get(['newOpen', 'isBlackList', 'blackList', 'whiteList'], function (data) {
-            if (isReady && data.newOpen && tab.active) {
-                isReady = false;
+            if (data.newOpen) {
                 // set state of new tab
                 chrome.storage.local.set({newOpen: false});
 
@@ -30,18 +30,22 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                         // black list mode
                         for (let i = 0; i < tabs.length; i++) {
                             for (let j = 0; j < data.blackList.length; j++) {
-                                if (tabs[i].id !== tab.id && !matchDomain(data.blackList[j], tabs[i].url)) {
+                                if (tabs[i].id !== tab.id && matchDomain(data.blackList[j], tabs[i].url)) {
                                     chrome.tabs.remove(tabs[i].id);
                                 }
                             }
                         }
                     } else {
+                        let isMatch = false;
                         // white list mode
                         for (let i = 0; i < tabs.length; i++) {
                             for (let j = 0; j < data.whiteList.length; j++) {
-                                if (tabs[i].id !== tab.id && matchDomain(data.whiteList[j], tabs[i].url)) {
-                                    chrome.tabs.remove(tabs[i].id);
+                                if (!matchDomain(data.whiteList[j], tabs[i].url)) {
+                                    isMatch = true;
                                 }
+                            }
+                            if (!isMatch && tabs[i].id !== tab.id) {
+                                chrome.tabs.remove(tabs[i].id);
                             }
                         }
                     }
@@ -54,22 +58,24 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                         chrome.storage.local.set({closeNum: data.closeNum + tabs.length - 1});
                     });
                 });
-                isReady = true;
             }
         });
+        isReady = true;
     }
 });
 
-chrome.runtime.onInstalled.addListener(function () {
-    chrome.storage.local.set({
-        newOpen: true,
-        closeTimes: 0,
-        closeNum: 0,
-        lastCloseNum: 0,
-        isBlackList: true,
-        blackList: [],
-        whiteList: [],
-    });
+chrome.runtime.onInstalled.addListener(function (details) {
+    if (details.reason === 'install') {
+        chrome.storage.local.set({
+            newOpen: true,
+            closeTimes: 0,
+            closeNum: 0,
+            lastCloseNum: 0,
+            isBlackList: true,
+            blackList: [],
+            whiteList: [],
+        });
+    }
 });
 
 // Url domain match
