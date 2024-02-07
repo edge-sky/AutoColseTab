@@ -1,4 +1,4 @@
-# AutoColseTap
+# AutoCloseTab
 
 ## background
 The default strategy of the edge browser for the classification of tabs is a fixed tab group. I use the automatic classification and expansion of tabs in daily use to browse efficiently, but when I close and then open, the previously automatically classified tabs will still be issued. Most of them are not needed and do not conform to personal habits, so I have this expansion.
